@@ -22,10 +22,10 @@ public class User {
 	@Column(name = "password", nullable = false)
 	private String password; //비밀번호
 
-	@Column(name ="nickname", length = 50)
+	@Column(name = "nickname", length = 50)
 	private String nickname; //닉네임
 
-	@Column(name ="name", length = 30)
+	@Column(name = "name", length = 30)
 	private String name; //이름
 
 	@Column(name = "phone_number", length = 15)
@@ -45,5 +45,12 @@ public class User {
 
 	public static User of(String id, String password, String nickname, String name, String phoneNumber, String email) {
 		return new User(id, password, nickname, name, phoneNumber, email);
+	}
+
+	public void updateInfo(String password, String nickname, String phoneNumber, String email) {
+		this.password = password;
+		this.nickname = nickname;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
 	}
 }
