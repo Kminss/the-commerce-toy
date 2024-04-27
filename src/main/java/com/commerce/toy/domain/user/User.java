@@ -27,9 +27,24 @@ public class User {
 	@Column(name ="nickname", length = 50)
 	private String nickname; //닉네임
 
+	@Column(name ="name", length = 30)
+	private String name; //이름
+
 	@Column(name = "phone_number", length = 15)
 	private String phoneNumber; //휴대전화번호
 
 	@Column(name = "email", length = 100)
 	private String email; //이메일
+
+	private User(String password, String nickname, String name, String phoneNumber, String email) {
+		this.password = password;
+		this.nickname = nickname;
+		this.name = name;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
+	}
+
+	public static User of(String password, String nickname, String name, String phoneNumber, String email) {
+		return new User(password, nickname, name, phoneNumber, email);
+	}
 }
