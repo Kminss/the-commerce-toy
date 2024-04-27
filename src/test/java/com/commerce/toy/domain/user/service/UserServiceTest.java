@@ -31,6 +31,7 @@ class UserServiceTest {
 	void givenJoinInfo_whenRequestingJoin_thenCreateUserAndReturn201() throws Exception {
 		//Given
 		JoinRequest request = JoinRequest.builder()
+			.id("testid")
 			.email("test1@test.com")
 			.password("testPassword")
 			.nickname("nickname")
@@ -38,7 +39,7 @@ class UserServiceTest {
 			.build();
 		User user = request.toEntity();
 
-		given(userRepository.existsUserByEmail(request.getEmail())).willReturn(false);
+		given(userRepository.existsUserById(request.getId())).willReturn(false);
 		//When
 		sut.join(request);
 
@@ -46,19 +47,20 @@ class UserServiceTest {
 		then(userRepository).should().save(any(User.class));
 	}
 
-	@DisplayName("회원가입 실패 - 이메일 중복되는 경우")
+	@DisplayName("회원가입 실패 - 아이디가 중복되는 경우")
 	@Test
 	@Transactional
 	void givenDuplicateJoinInfo_whenRequestingJoin_thenReturn409() throws Exception {
 		//Given
 		JoinRequest request = JoinRequest.builder()
+			.id("testids")
 			.email("test@test.com")
 			.password("testPassword")
 			.nickname("nickname")
 			.phoneNumber("010-0000-0000")
 			.build();
 
-		given(userRepository.existsUserByEmail(request.getEmail())).willReturn(true);
+		given(userRepository.existsUserById(request.getId())).willReturn(true);
 
 		//When && Then
 		assertThatThrownBy(() -> sut.join(request))

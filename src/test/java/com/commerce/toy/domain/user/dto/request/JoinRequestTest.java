@@ -32,6 +32,103 @@ class JoinRequestTest {
 		factory.close();
 	}
 
+	@DisplayName("아이디 유효성 검증")
+	@Nested
+	class IdTest {
+		@DisplayName("한글 입력시 실패")
+		@Test
+		void givenKorId_whenRequestingJoin_thenReturn400() throws Exception {
+			//Given
+			JoinRequest request = new JoinRequest(
+				"테스트로그인아이디",
+				"password1234",
+				"nickname",
+				"name",
+				"010-0000-0000",
+				"test@test.com"
+			);
+			//When
+			Set<ConstraintViolation<JoinRequest>> validations = validator.validate(request);
+			//Then
+			assertThat(validations).hasSize(1);
+		}
+		@DisplayName("대문자 입력시 실패")
+		@Test
+		void givenBigAlpaId_whenRequestingJoin_thenReturn400() throws Exception {
+			//Given
+			JoinRequest request = new JoinRequest(
+				"Testloginid",
+				"password1234",
+				"nickname",
+				"name",
+				"010-0000-0000",
+				"test@test.com"
+			);
+			//When
+			Set<ConstraintViolation<JoinRequest>> validations = validator.validate(request);
+			//Then
+			assertThat(validations).hasSize(1);
+		}
+
+		@DisplayName("특수문자 입력시 실패")
+		@Test
+		void givenSymbolId_whenRequestingJoin_thenReturn400() throws Exception {
+			//Given
+			JoinRequest request = new JoinRequest(
+				"@testloginid",
+				"password1234",
+				"nickname",
+				"name",
+				"010-0000-0000",
+				"test@test.com"
+			);
+			//When
+			Set<ConstraintViolation<JoinRequest>> validations = validator.validate(request);
+			//Then
+			assertThat(validations).hasSize(1);
+		}
+
+		@DisplayName("길이 기준 범위 밖 실패")
+		@ValueSource(strings = {"testids", "testids123456789011233456789000"})
+		@ParameterizedTest
+		void givenUnderLengthPassword_whenRequestingJoin_thenReturn400(String id) throws Exception {
+			//Given
+			JoinRequest request = new JoinRequest(
+				id,
+				"testpassword",
+				"nickname",
+				"name",
+				"010-0000-0000",
+				"test@test.com"
+			);
+			//When
+			Set<ConstraintViolation<JoinRequest>> validations = validator.validate(request);
+			//Then
+			assertThat(validations).hasSize(1);
+		}
+
+
+
+		@DisplayName("길이 기준 경계 정상")
+		@ValueSource(strings = {"testidss", "testids12345678901123345678900"})
+		@ParameterizedTest
+		void givenOverLengthPassword_whenRequestingJoin_thenReturn400(String id) throws Exception {
+			//Given
+			JoinRequest request = new JoinRequest(
+				id,
+				"testpassword",
+				"nickname",
+				"name",
+				"010-0000-0000",
+				"test@test.com"
+			);
+			//When
+			Set<ConstraintViolation<JoinRequest>> validations = validator.validate(request);
+			//Then
+			assertThat(validations).isEmpty();
+		}
+	}
+
 	@DisplayName("비밀번호 유효성 검증")
 	@Nested
 	class PasswordTest {
@@ -41,6 +138,7 @@ class JoinRequestTest {
 		void givenKorPassword_whenRequestingJoin_thenReturn400() throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				"패스워드1234",
 				"nickname",
 				"name",
@@ -58,6 +156,7 @@ class JoinRequestTest {
 		void givenSymbolPassword_whenRequestingJoin_thenReturn400() throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				"password1234@",
 				"nickname",
 				"name",
@@ -76,6 +175,7 @@ class JoinRequestTest {
 		void givenUnderLengthPassword_whenRequestingJoin_thenReturn400(String password) throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				password,
 				"nickname",
 				"name",
@@ -94,6 +194,7 @@ class JoinRequestTest {
 		void givenOverLengthPassword_whenRequestingJoin_thenReturn400(String password) throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				password,
 				"nickname",
 				"name",
@@ -117,6 +218,7 @@ class JoinRequestTest {
 		void givenOverRangeLengthNickname_whenRequestingJoin_thenReturn400(String nickname) throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				"password",
 				nickname,
 				"name",
@@ -135,6 +237,7 @@ class JoinRequestTest {
 		void givenOverLengthNickname_whenRequestingJoin_thenReturn400(String nickname) throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				"password",
 				nickname,
 				"name",
@@ -158,6 +261,7 @@ class JoinRequestTest {
 		void givenUnderLengthNickname_whenRequestingJoin_thenReturn400(String email) throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				"password",
 				"nickname",
 				"name",
@@ -182,6 +286,7 @@ class JoinRequestTest {
 		void givenUnderLengthNickname_whenRequestingJoin_thenReturn400(String phoneNumber) throws Exception {
 			//Given
 			JoinRequest request = new JoinRequest(
+				"testloginid",
 				"password",
 				"nickname",
 				"name",
