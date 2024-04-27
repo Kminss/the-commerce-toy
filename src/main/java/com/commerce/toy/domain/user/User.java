@@ -2,8 +2,6 @@ package com.commerce.toy.domain.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -18,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id; //회원 식별자 ID
+	@Column(name = "id", length = 30)
+	private String id; //회원 로그인 ID
 
 	@Column(name = "password", nullable = false)
 	private String password; //비밀번호
@@ -36,7 +34,8 @@ public class User {
 	@Column(name = "email", length = 100)
 	private String email; //이메일
 
-	private User(String password, String nickname, String name, String phoneNumber, String email) {
+	private User(String id, String password, String nickname, String name, String phoneNumber, String email) {
+		this.id = id;
 		this.password = password;
 		this.nickname = nickname;
 		this.name = name;
@@ -44,7 +43,7 @@ public class User {
 		this.email = email;
 	}
 
-	public static User of(String password, String nickname, String name, String phoneNumber, String email) {
-		return new User(password, nickname, name, phoneNumber, email);
+	public static User of(String id, String password, String nickname, String name, String phoneNumber, String email) {
+		return new User(id, password, nickname, name, phoneNumber, email);
 	}
 }
