@@ -11,7 +11,7 @@ local.properties
 .loadpath
 .recommenders
 #application.yml
-application*.yml
+#application*.yml
 # External tool builders
 .externalToolBuilders/
 # Ignore everything under Resources folder, not elsewhere
