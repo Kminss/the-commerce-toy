@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	private final UserRepository userRepository;
 	public void join(JoinRequest request) {
-		String email = request.getEmail();
+		String id = request.getId();
 
-		if (userRepository.existsUserByEmail(email)) {
+		if (userRepository.existsUserById(id)) {
 			throw new ApiException(ALREADY_EXIST_USER);
 		}
 
