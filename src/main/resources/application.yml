@@ -21,6 +21,9 @@ spring:
         size-parameter: pageSize
         default-page-size: 15
 
+  mvc:
+    path-match:
+      matching-strategy: ant_path_matcher
 
 logging:
   level:
