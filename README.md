@@ -4,6 +4,7 @@
 - Java1.8 (temurin)
 - SpringBoot 2.7.5
 - MySQL 8.2.0
+- Gradle 8.7
 
 ## API 명세 (Swagger)
 http://localhost:8080/swagger-ui/
