@@ -1,9 +1,11 @@
-package com.commerce.toy.domain.user;
+package com.commerce.toy.domain.user.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.commerce.toy.global.entity.BaseEntity;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 @Entity
-public class User {
+public class User extends BaseEntity {
 
 	@Id
 	@Column(name = "id", length = 30)

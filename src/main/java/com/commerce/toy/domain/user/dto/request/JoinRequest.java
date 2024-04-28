@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.commerce.toy.domain.user.User;
+import com.commerce.toy.domain.user.entity.User;
 
 import lombok.AccessLevel;
 import lombok.Builder;
