@@ -1,10 +1,14 @@
 package com.commerce.toy.domain.user.service;
 
 import static com.commerce.toy.global.exception.ErrorCode.*;
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,9 +16,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.commerce.toy.domain.user.User;
+import com.commerce.toy.domain.user.dto.response.UserInfoResponse;
+import com.commerce.toy.domain.user.entity.User;
 import com.commerce.toy.domain.user.dto.request.JoinRequest;
 import com.commerce.toy.domain.user.dto.request.UpdateUserRequest;
 import com.commerce.toy.domain.user.dto.response.UpdateUserResponse;
@@ -123,5 +132,65 @@ class UserServiceTest {
 		assertThatThrownBy(() -> sut.update(id, request))
 			.isInstanceOf(ApiException.class)
 			.hasMessage(USER_NOT_FOUND.getMessage());
+	}
+
+	@DisplayName("회원목록 조회 페이징 정상")
+	@Test
+	@Transactional
+	void givenPageParams_whenRequestingFindAll_thenReturnUserPageList() throws Exception {
+		//Given
+		int pageSize = 15;
+		int page = 0;
+		String sort = "createdAt";
+		PageRequest pageable = PageRequest.of(page, pageSize, Sort.by(sort).descending());
+		List<User> users = getUserInfos(pageSize);
+		List<UserInfoResponse> list = users.stream()
+			.map(UserInfoResponse::from)
+			.collect(Collectors.toList());
+
+		given(userRepository.findAll(pageable)).willReturn(new PageImpl<>(users, pageable, 1));
+
+		//When
+		Page<UserInfoResponse> response = sut.findAll(pageable);
+
+		//Then
+		assertThat(response.getSize()).isEqualTo(pageSize);
+		assertThat(response.getPageable().getPageNumber()).isEqualTo(page);
+		assertThat(response.getContent()).usingRecursiveComparison().isEqualTo(list);
+		then(userRepository).should().findAll(pageable);
+	}
+	@DisplayName("회원목록 없는 경우 빈 페이지 리턴")
+	@Test
+	@Transactional
+	void givenPageParams_whenRequestingFindAll_thenReturnEmptyPage() throws Exception {
+		//Given
+		int pageSize = 15;
+		int page = 0;
+		String sort = "createdAt";
+		PageRequest pageable = PageRequest.of(page, pageSize, Sort.by(sort).descending());
+		given(userRepository.findAll(pageable)).willReturn(new PageImpl<>(EMPTY_LIST, pageable, 0));
+
+		//When
+		Page<UserInfoResponse> response = sut.findAll(pageable);
+
+		//Then
+		assertThat(response).isEqualTo(Page.empty(pageable));
+		then(userRepository).should().findAll(pageable);
+	}
+
+	List<User> getUserInfos(int size) {
+		List<User> users = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			users.add(
+				User.of(
+					"testids" + (i + 1),
+					"testpassword",
+					"testnickname",
+					"name",
+					"010-1234-5678",
+					"test@test.com")
+			);
+		}
+		return users;
 	}
 }
